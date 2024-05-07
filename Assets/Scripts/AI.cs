@@ -20,4 +20,14 @@ public class AI : MonoBehaviour
 
         _navMeshAgent.destination = _endPoint.position;
     }
+
+    public void SetStartPoint(Transform startPoint)
+    {
+        _startPoint = startPoint;
+    }
+
+    public void SetEndPoint(Transform endPoint)
+    {
+        _endPoint = endPoint;
+    }
 }
