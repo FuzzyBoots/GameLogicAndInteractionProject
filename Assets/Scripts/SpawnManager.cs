@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
@@ -16,6 +18,10 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private List<AI> _objectPool;
     [SerializeField] private int _amountToPool = 10;
 
+    [SerializeField] List<HidingPlace> _hidingPlaces;
+
+    [SerializeField] GameObject _hidingPlaceContainer;
+
     public static SpawnManager Instance
     {
         get;
@@ -25,6 +31,8 @@ public class SpawnManager : MonoBehaviour
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
+
+        _hidingPlaces = _hidingPlaceContainer.GetComponentsInChildren<HidingPlace>().ToList<HidingPlace>();
 
         if (Instance != null && Instance != this)
         {
@@ -52,12 +60,7 @@ public class SpawnManager : MonoBehaviour
     // Hide the constructor
     private SpawnManager() { }
 
-    public void StartSpawning()
-    {
-        Instance.StartSpawningOnInstance();
-    }
-
-    private void StartSpawningOnInstance()
+    private void StartSpawning()
     {
         _spawning = true;
         StartCoroutine(SpawnTargets());
@@ -94,8 +97,7 @@ public class SpawnManager : MonoBehaviour
 
             AI ai = target.GetComponent<AI>();
 
-            ai.SetStartPoint(_startPoint);
-            ai.SetEndPoint(_endPoint);
+            ai.Initialize(_startPoint, _endPoint, _hidingPlaces);
 
             yield return new WaitForSeconds(_delayTime);
         }
