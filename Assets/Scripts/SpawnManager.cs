@@ -93,7 +93,6 @@ public class SpawnManager : MonoBehaviour
             {
                 target.gameObject.SetActive(true);
                 target.Initialize(_startPoint, _endPoint, _hidingPlaces);
-                Debug.Break();
             }
 
             yield return new WaitForSeconds(_delayTime);

@@ -263,8 +263,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startPoint: {fileID: 0}
   _endPoint: {fileID: 0}
-  _hideProbability: 0.3
-  _stoppingThreshold: 0.5
+  _hideProbability: 0.9
+  _state: 0
+  _hideEndTime: 0
+  _stoppingThreshold: 0.25
   _hidingTime: 3
 --- !u!54 &7100790204020123961
 Rigidbody:

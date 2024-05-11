@@ -19,8 +19,8 @@ public class AI : MonoBehaviour
     [SerializeField] Transform _endPoint;
 
     [SerializeField, Range(0, 1)] float _hideProbability;
-    private fsmStates _state = fsmStates.Running;
-    private float _hideEndTime;
+    [SerializeField] private fsmStates _state = fsmStates.Running;
+    [SerializeField] private float _hideEndTime;
     List<HidingPlace> _hidingPoints;
     List<HidingPlace>.Enumerator _hidingPointIterator;
     [SerializeField] private float _stoppingThreshold = 0.5f;
@@ -46,7 +46,6 @@ public class AI : MonoBehaviour
         // Because we're using object-pooling, we need to reset all pertinent items.
         // Start and End Points don't change but we'll pass them in.
         Debug.Log($"Resetting to {_startPoint} - {_endPoint} - {_hidingPoints}");
-        Debug.Break();
         Initialize(_startPoint, _endPoint, _hidingPoints);
 
         gameObject.SetActive(true);
