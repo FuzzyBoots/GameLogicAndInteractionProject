@@ -27,6 +27,9 @@ public class AI : MonoBehaviour
     [SerializeField] private float _hidingTime;
 
     HidingPlace hidingPlace;
+    private Animator _targetAnimator;
+    private float _speed;
+    private Vector3 _lastPosition;
 
     public NavMeshAgent NavMeshAgent { 
         get { 
@@ -38,6 +41,21 @@ public class AI : MonoBehaviour
             }
 
             return _navMeshAgent;
+        }
+    }
+
+    public Animator TargetAnimator
+    {
+        get
+        {
+            if (!_targetAnimator) { _targetAnimator = GetComponent<Animator>(); }
+
+            if (_navMeshAgent == null)
+            {
+                Debug.LogError("Could not find Animator!", this.gameObject);
+            }
+
+            return _targetAnimator;
         }
     }
 
@@ -101,8 +119,17 @@ public class AI : MonoBehaviour
         NavMeshAgent.destination = _endPoint.transform.position;
     }
 
+    void FixedUpdate()
+    {
+        _speed = Mathf.Lerp(_speed, (transform.position - _lastPosition).magnitude, 0.7f /*adjust this number in order to make interpolation quicker or slower*/);
+        _lastPosition = transform.position;
+
+        print(_speed);
+    }
+
     private void StartRunning()
     {
+        TargetAnimator.SetBool("Hiding", false);
         NavMeshAgent.isStopped = false;
 
         SetNextDestination();
@@ -112,6 +139,7 @@ public class AI : MonoBehaviour
 
     void RunActions()
     {
+        TargetAnimator.SetFloat("Speed", _speed);
         if (NavMeshAgent.remainingDistance < _stoppingThreshold)
         {
             StartHiding();
@@ -120,7 +148,7 @@ public class AI : MonoBehaviour
 
     private void StartHiding()
     {
-        // Start Animation?
+        TargetAnimator.SetBool("Hiding", true);
         _state = fsmStates.Hiding;
         _hideEndTime = Time.time + _hidingTime + Random.Range(0, 2f);
     }
@@ -136,7 +164,7 @@ public class AI : MonoBehaviour
 
     private void StartDeath()
     {
-        // Start Animation?
+        TargetAnimator.SetTrigger("Death");
         // Increment score by 50
 
         NavMeshAgent.isStopped = true;
