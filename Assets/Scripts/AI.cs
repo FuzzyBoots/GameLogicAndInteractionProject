@@ -45,15 +45,11 @@ public class AI : MonoBehaviour
     {
         // Because we're using object-pooling, we need to reset all pertinent items.
         // Start and End Points don't change but we'll pass them in.
+        Debug.Log($"Resetting to {_startPoint} - {_endPoint} - {_hidingPoints}");
+        Debug.Break();
         Initialize(_startPoint, _endPoint, _hidingPoints);
 
         gameObject.SetActive(true);
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        transform.position = _startPoint.position;
     }
 
     public void Initialize(Transform startPoint, Transform endPoint, List<HidingPlace> hidingPoints)
@@ -61,8 +57,14 @@ public class AI : MonoBehaviour
         _startPoint = startPoint;
         _endPoint = endPoint;
 
+        Debug.Log($"Initialized at {_startPoint.position}");
+
+        NavMeshAgent.enabled = false;
         transform.position = _startPoint.position;
         transform.rotation = _startPoint.rotation;
+        NavMeshAgent.enabled = true;
+
+        Debug.Log($"Located at {transform.position}");
 
         _hidingPoints = hidingPoints;
         _hidingPointIterator = _hidingPoints.GetEnumerator();

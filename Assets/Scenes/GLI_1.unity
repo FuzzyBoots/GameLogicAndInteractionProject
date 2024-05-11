@@ -17123,12 +17123,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb4c94fcad8f31b4296a605dba4c136c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetObject: {fileID: 3283612407655031644, guid: 56e177331f5ece54193a14793c176fb1, type: 3}
+  _targetObject: {fileID: 7461003580301987754, guid: eff3a41b359848f4d837283e8380ef45, type: 3}
   _delayTime: 5
   _startPoint: {fileID: 2280435906685543228}
   _endPoint: {fileID: 1152805746}
   _objectPool: []
-  _amountToPool: 10
+  _amountToPool: 20
   _hidingPlaces: []
   _hidingPlaceContainer: {fileID: 1913120331}
 --- !u!4 &780869571 stripped

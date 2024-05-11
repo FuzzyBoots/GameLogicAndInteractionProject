@@ -91,13 +91,10 @@ public class SpawnManager : MonoBehaviour
                 target = Instantiate(_targetObject);
             } else
             {
-                // Positioning should be handled by the object's Start
                 target.gameObject.SetActive(true);
+                target.Initialize(_startPoint, _endPoint, _hidingPlaces);
+                Debug.Break();
             }
-
-            AI ai = target.GetComponent<AI>();
-
-            ai.Initialize(_startPoint, _endPoint, _hidingPlaces);
 
             yield return new WaitForSeconds(_delayTime);
         }
