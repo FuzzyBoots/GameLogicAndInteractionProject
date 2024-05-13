@@ -8,6 +8,7 @@ public class EndPoint : MonoBehaviour
     {
         if (other.gameObject.GetComponent<AI>())
         {
+            GetComponent<AudioSource>().Play();
             other.gameObject.SetActive(false);
             GameManager.Instance.AdjustScore(-10);
         }

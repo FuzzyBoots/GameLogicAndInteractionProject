@@ -165,7 +165,12 @@ public class AI : MonoBehaviour
     private void StartDeath()
     {
         TargetAnimator.SetTrigger("Death");
-        DisableColliderAndRigidBody();
+        GetComponent<AudioSource>().Play();
+        if (hidingPlace && hidingPlace.InUse)
+        {
+            hidingPlace.InUse = false;
+        }
+        DisableCollider();
         GameManager.Instance.AdjustEnemies(-1);
         _state = fsmStates.Dead;
         GameManager.Instance.AdjustScore(50);
@@ -175,11 +180,9 @@ public class AI : MonoBehaviour
         NavMeshAgent.isStopped = true;
     }
 
-    private void DisableColliderAndRigidBody()
+    private void DisableCollider()
     {
         GetComponent<Collider>().enabled = false;
-        GetComponent<Rigidbody>().isKinematic = false;
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
     }
 
     void DeathActions()

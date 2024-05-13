@@ -43,12 +43,22 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         private float _lookSensitivity = 5.0f; //mouse sensitivity 
 
         private Camera _fpsCamera;
+
+        [Header("Gun Settings")]
         private int _targetsAndBarriers;
+        [SerializeField] private float _bulletDelay = 1f;
+        private float _canFire;
+
+        [SerializeField] AudioSource _audioSource;
+        [SerializeField] AudioClip _gunSound;
+        [SerializeField] AudioClip _ricochetSound;
+        [SerializeField] AudioClip _hitSound;
 
         private void Start()
         {
             _controller = GetComponent<CharacterController>(); //assign the reference variable to the component
             _fpsCamera = GetComponentInChildren<Camera>();
+            _audioSource = GetComponent<AudioSource>();
             _initialCameraPos = _fpsCamera.transform.localPosition;
             Debug.Log("Cursor should be locked down");
             Cursor.lockState = CursorLockMode.Locked;
@@ -105,15 +115,23 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                 _isRunning = false;
             }
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && Time.time > _canFire)
             {
+                _canFire = Time.time +  _bulletDelay;
+                _audioSource.PlayOneShot(_gunSound);
+
                 Ray ray = _fpsCamera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, _targetsAndBarriers))
                 {
                     if (hit.collider.gameObject.TryGetComponent<AI>(out AI ai))
                     {
+                        AudioSource.PlayClipAtPoint(_hitSound, hit.point);
                         ai.HandleShot();
+                    }
+                    else
+                    {
+                        PlayClipAt(_ricochetSound, hit.collider.transform.position);
                     }
                 }
             }
@@ -146,6 +164,19 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         //        Gizmos.DrawRay(ray);
         //    }
         //}
+
+        AudioSource PlayClipAt(AudioClip clip, Vector3 pos, float delay = 0f)
+        {
+            GameObject tempGO = new GameObject("TempAudio"); // create the temp object
+            tempGO.transform.position = pos; // set its position
+            AudioSource aSource = tempGO.AddComponent<AudioSource>(); // add an audio source
+            aSource.clip = clip; // define the clip
+            aSource.rolloffMode = AudioRolloffMode.Linear;
+            aSource.spatialBlend = 1f;
+            aSource.PlayDelayed(delay); // start the sound
+            Destroy(tempGO, clip.length); // destroy object after clip duration
+            return aSource; // return the AudioSource reference
+        }
 
         void CameraController()
         {
