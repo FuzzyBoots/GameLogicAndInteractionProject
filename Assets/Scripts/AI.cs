@@ -20,7 +20,8 @@ public class AI : MonoBehaviour
 
     [SerializeField, Range(0, 1)] float _hideProbability;
     [SerializeField] private fsmStates _state = fsmStates.Running;
-    [SerializeField] private float _hideEndTime;
+    float _timeToFade;
+    private float _hideEndTime;
     List<HidingPlace> _hidingPoints;
     List<HidingPlace>.Enumerator _hidingPointIterator;
     [SerializeField] private float _stoppingThreshold = 0.5f;
@@ -30,6 +31,7 @@ public class AI : MonoBehaviour
     private Animator _targetAnimator;
     private float _speed;
     private Vector3 _lastPosition;
+    [SerializeField] private float _fadeTime;
 
     public NavMeshAgent NavMeshAgent { 
         get { 
@@ -123,8 +125,6 @@ public class AI : MonoBehaviour
     {
         _speed = Mathf.Lerp(_speed, (transform.position - _lastPosition).magnitude, 0.7f /*adjust this number in order to make interpolation quicker or slower*/);
         _lastPosition = transform.position;
-
-        print(_speed);
     }
 
     private void StartRunning()
@@ -165,14 +165,30 @@ public class AI : MonoBehaviour
     private void StartDeath()
     {
         TargetAnimator.SetTrigger("Death");
-        // Increment score by 50
+        DisableColliderAndRigidBody();
+        GameManager.Instance.AdjustEnemies(-1);
+        _state = fsmStates.Dead;
+        GameManager.Instance.AdjustScore(50);
 
+        _timeToFade = Time.time + _fadeTime;
+        
         NavMeshAgent.isStopped = true;
+    }
+
+    private void DisableColliderAndRigidBody()
+    {
+        GetComponent<Collider>().enabled = false;
+        GetComponent<Rigidbody>().isKinematic = false;
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
     }
 
     void DeathActions()
     {
         // After our death time has elapsed, fade away and return the model
+        if (Time.time > _timeToFade)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     private void Update()
@@ -186,5 +202,10 @@ public class AI : MonoBehaviour
             case fsmStates.Dead:
                 DeathActions(); break;
         }
+    }
+
+    internal void HandleShot()
+    {
+        StartDeath();
     }
 }

@@ -87,12 +87,12 @@ public class SpawnManager : MonoBehaviour
 
             if (target == null)
             {
-                Debug.LogWarning("Exceeded our object pool. Spawning a new copy");
-                target = Instantiate(_targetObject);
+                Debug.LogWarning("Exceeded our object pool. Not spawning.");
             } else
             {
                 target.gameObject.SetActive(true);
                 target.Initialize(_startPoint, _endPoint, _hidingPlaces);
+                GameManager.Instance.AdjustEnemies(1);
             }
 
             yield return new WaitForSeconds(_delayTime);

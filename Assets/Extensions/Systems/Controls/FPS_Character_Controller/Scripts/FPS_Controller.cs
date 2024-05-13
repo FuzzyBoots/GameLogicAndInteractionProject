@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
@@ -8,11 +9,11 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
     public class FPS_Controller : MonoBehaviour
     {
         [Header("Controller Info")]
-        [SerializeField ][Tooltip("How fast can the controller walk?")]
+        [SerializeField][Tooltip("How fast can the controller walk?")]
         private float _walkSpeed = 3.0f; //how fast the character is walking
         [SerializeField][Tooltip("How fast can the controller run?")]
         private float _runSpeed = 7.0f; // how fast the character is running
-        [SerializeField][Tooltip("Set your gravity multiplier")] 
+        [SerializeField][Tooltip("Set your gravity multiplier")]
         private float _gravity = 1.0f; //how much gravity to apply 
         [SerializeField][Tooltip("How high can the controller jump?")]
         private float _jumpHeight = 15.0f; //how high can the character jump
@@ -23,9 +24,9 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
 
         private CharacterController _controller; //reference variable to the character controller component
         private float _yVelocity = 0.0f; //cache our y velocity
-        
 
-        [Header("Headbob Settings")]       
+
+        [Header("Headbob Settings")]
         [SerializeField][Tooltip("Smooth out the transition from moving to not moving")]
         private float _smooth = 20.0f; //smooth out the transition from moving to not moving
         [SerializeField][Tooltip("How quickly the player head bobs")]
@@ -42,19 +43,27 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         private float _lookSensitivity = 5.0f; //mouse sensitivity 
 
         private Camera _fpsCamera;
+        private int _targetsAndBarriers;
+
         private void Start()
         {
             _controller = GetComponent<CharacterController>(); //assign the reference variable to the component
             _fpsCamera = GetComponentInChildren<Camera>();
             _initialCameraPos = _fpsCamera.transform.localPosition;
+            Debug.Log("Cursor should be locked down");
             Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            _targetsAndBarriers = LayerMask.GetMask(new string[] { "Target", "PossibleCover" });
         }
 
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
+                Debug.Log("Cursor should no longer be locked down");
                 Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
             }
 
             FPSController();
@@ -96,6 +105,19 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                 _isRunning = false;
             }
 
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = _fpsCamera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, _targetsAndBarriers))
+                {
+                    if (hit.collider.gameObject.TryGetComponent<AI>(out AI ai))
+                    {
+                        ai.HandleShot();
+                    }
+                }
+            }
+
             if (_controller.isGrounded == true) //check if we're grounded
             {
                 if (Input.GetKeyDown(KeyCode.Space)) //check for the space key
@@ -114,6 +136,16 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
 
             _controller.Move(velocity * Time.deltaTime); //move the controller x meters per second
         }
+
+        //private void OnDrawGizmos()
+        //{
+        //    Ray ray = _fpsCamera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
+        //    RaycastHit hit;
+        //    if (Physics.Raycast(ray, out hit, Mathf.Infinity, _targetsAndBarriers))
+        //    {
+        //        Gizmos.DrawRay(ray);
+        //    }
+        //}
 
         void CameraController()
         {
