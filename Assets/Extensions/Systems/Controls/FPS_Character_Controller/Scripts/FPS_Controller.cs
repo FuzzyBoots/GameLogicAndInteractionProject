@@ -49,7 +49,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         [SerializeField] private float _bulletDelay = 1f;
         private float _canFire;
 
-        [SerializeField] AudioSource _audioSource;
+        AudioSource _audioSource;
         [SerializeField] AudioClip _gunSound;
         [SerializeField] AudioClip _ricochetSound;
         [SerializeField] AudioClip _hitSound;
@@ -165,7 +165,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         //    }
         //}
 
-        AudioSource PlayClipAt(AudioClip clip, Vector3 pos, float delay = 0f)
+        static AudioSource PlayClipAt(AudioClip clip, Vector3 pos, float delay = 0f)
         {
             GameObject tempGO = new GameObject("TempAudio"); // create the temp object
             tempGO.transform.position = pos; // set its position
@@ -173,7 +173,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
             aSource.clip = clip; // define the clip
             aSource.rolloffMode = AudioRolloffMode.Linear;
             aSource.spatialBlend = 1f;
-            aSource.PlayDelayed(delay); // start the sound
+            aSource.PlayDelayed(delay + delay); // start the sound
             Destroy(tempGO, clip.length); // destroy object after clip duration
             return aSource; // return the AudioSource reference
         }

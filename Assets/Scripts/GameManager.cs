@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     public void StartSession()
     {
         _startTime = Time.time;
+        SpawnManager.Instance.
     }
 
     private void Update()

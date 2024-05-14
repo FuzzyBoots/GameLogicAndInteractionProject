@@ -53,17 +53,23 @@ public class SpawnManager : MonoBehaviour
             tmp.gameObject.SetActive(false);
             _objectPool.Add(tmp);
         }
-
-        Instance.StartSpawning();
     }
 
     // Hide the constructor
     private SpawnManager() { }
 
-    private void StartSpawning()
+    public void StartSpawning()
     {
-        _spawning = true;
-        StartCoroutine(SpawnTargets());
+        if (!_spawning)
+        {
+            _spawning = true;
+            StartCoroutine(SpawnTargets());
+        }
+    }
+
+    public void StopSpawning ()
+    {
+        _spawning = false;
     }
 
     private AI GetNextPooledObject()

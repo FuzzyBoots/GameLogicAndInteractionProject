@@ -165,7 +165,7 @@ public class AI : MonoBehaviour
     private void StartDeath()
     {
         TargetAnimator.SetTrigger("Death");
-        GetComponent<AudioSource>().Play();
+        GetComponent<AudioSource>().PlayDelayed(0.1f);
         if (hidingPlace && hidingPlace.InUse)
         {
             hidingPlace.InUse = false;
