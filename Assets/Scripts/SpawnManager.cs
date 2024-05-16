@@ -106,4 +106,12 @@ public class SpawnManager : MonoBehaviour
 
         yield return null;
     }
+
+    internal void DeactivateSpawns()
+    {
+        foreach (AI item in _objectPool)
+        {
+            item.gameObject.SetActive(false);
+        }
+    }
 }

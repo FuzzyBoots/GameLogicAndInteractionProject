@@ -66,7 +66,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
             _fpsCamera = GetComponentInChildren<Camera>();
             _audioSource = GetComponent<AudioSource>();
             _initialCameraPos = _fpsCamera.transform.localPosition;
-            Debug.Log("Cursor should be locked down");
+            
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 

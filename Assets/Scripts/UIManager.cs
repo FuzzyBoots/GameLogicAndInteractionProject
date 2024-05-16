@@ -5,12 +5,14 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] TMP_Text scoreText;
-    [SerializeField] TMP_Text timeText;
-    [SerializeField] TMP_Text enemiesRemainingText;
-    [SerializeField] TMP_Text enemiesEscapedText;
+    [SerializeField] TMP_Text _scoreText;
+    [SerializeField] TMP_Text _timeText;
+    [SerializeField] TMP_Text _enemiesRemainingText;
+    [SerializeField] TMP_Text _enemiesEscapedText;
 
-    private static UIManager _instance;
+    [SerializeField] GameObject _winScreen;
+    [SerializeField] GameObject _loseScreen;
+
     public static UIManager Instance
     {
         get;
@@ -29,22 +31,33 @@ public class UIManager : MonoBehaviour
             Instance = this;
         }
     }
+
     public void SetTime(float time)
     {
-        timeText.text = $"Time: {time:F2}";
+        _timeText.text = $"Time: {time:F2}";
     }
 
     public void SetScore(int score)
     {
-        scoreText.text = $"Score: {score}";
+        _scoreText.text = $"Score: {score}";
     }
 
     public void SetEnemiesRemaining(int enemies) {
-        enemiesRemainingText.text = $"Remaining: {enemies}";
+        _enemiesRemainingText.text = $"Remaining: {enemies}";
     }
 
     public void SetEnemiesEscaped(int enemies)
     {
-        enemiesEscapedText.text = $"Escaped: {enemies}";
+        _enemiesEscapedText.text = $"Escaped: {enemies}";
+    }
+
+    public void ShowWinScreen()
+    {
+        _winScreen.SetActive(true);
+    }
+
+    public void ShowLoseScreen()
+    {
+        _loseScreen.SetActive(true);
     }
 }

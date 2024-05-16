@@ -1,8 +1,10 @@
+using GameDevHQ.FileBase.Plugins.FPS_Character_Controller;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviour
@@ -13,6 +15,7 @@ public class GameManager : MonoBehaviour
     private int _score;
     private int _enemiesRemaining;
     private int _enemiesEscaped;
+    private bool _isEnded = false;
     [SerializeField] private float _duration = 240f;
 
     [SerializeField] private int _enemiesToKill = 25;
@@ -22,6 +25,9 @@ public class GameManager : MonoBehaviour
     {
         get;
         private set;
+    }
+
+    public float RemainingTime { get { return _duration - (Time.time - _startTime); }
     }
 
     private void Awake()
@@ -49,10 +55,14 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         // Update time
-        float timeRemaining = _duration - (Time.time - _startTime);
-        UIManager.Instance.SetTime(timeRemaining);
+        UIManager.Instance.SetTime(RemainingTime);
 
         CheckLossCondition();
+
+        if (_isEnded && Input.GetKeyDown(KeyCode.Escape))
+        {
+            ReloadScene();
+        }
     }
 
     private void Start()
@@ -83,10 +93,11 @@ public class GameManager : MonoBehaviour
 
     private void CheckLossCondition()
     {
-        if (_enemiesEscaped > _enemyEscapeThreshold || _duration <= 0)
+        if (_enemiesEscaped > _enemyEscapeThreshold || RemainingTime <= 0)
         {
-            Debug.Log("You lose");
-            Debug.Break();
+            _isEnded = true;
+            UIManager.Instance.ShowLoseScreen();
+            SpawnManager.Instance.StopSpawning();
         }
     }
 
@@ -94,9 +105,16 @@ public class GameManager : MonoBehaviour
     {
         if (_enemiesRemaining <= 0)
         {
-            // Trigger win condition
-            Debug.Log("You win!");
-            Debug.Break();
+            _isEnded = true;
+            UIManager.Instance.ShowWinScreen();
+            SpawnManager.Instance.StopSpawning();
+            SpawnManager.Instance.DeactivateSpawns();
         }
+    }
+
+    public void ReloadScene()
+    {
+        Debug.Log("Reloading scene");
+        SceneManager.LoadScene(1);
     }
 }
