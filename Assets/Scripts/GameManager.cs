@@ -41,12 +41,9 @@ public class GameManager : MonoBehaviour
     public void StartSession()
     {
         _startTime = Time.time;
-<<<<<<< HEAD
-        SpawnManager.Instance.
-=======
         _enemiesRemaining = _enemiesToKill;
         UIManager.Instance.SetEnemiesRemaining(_enemiesRemaining);
->>>>>>> 16c275a (Win and Loss conditions and the start of a menu system)
+        // SpawnManager.Instance.StartSpawning();
     }
 
     private void Update()

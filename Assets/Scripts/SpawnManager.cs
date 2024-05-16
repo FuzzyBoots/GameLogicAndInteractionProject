@@ -53,6 +53,7 @@ public class SpawnManager : MonoBehaviour
             tmp.gameObject.SetActive(false);
             _objectPool.Add(tmp);
         }
+        StartSpawning();
     }
 
     // Hide the constructor
