@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 
@@ -10,8 +11,12 @@ public class GameManager : MonoBehaviour
     private float _startTime;
 
     private int _score;
-    private int _enemies;
-    private float _duration = 60f;
+    private int _enemiesRemaining;
+    private int _enemiesEscaped;
+    [SerializeField] private float _duration = 240f;
+
+    [SerializeField] private int _enemiesToKill = 25;
+    [SerializeField] private int _enemyEscapeThreshold = 10;
 
     public static GameManager Instance
     {
@@ -32,11 +37,16 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
     }
-
+    
     public void StartSession()
     {
         _startTime = Time.time;
+<<<<<<< HEAD
         SpawnManager.Instance.
+=======
+        _enemiesRemaining = _enemiesToKill;
+        UIManager.Instance.SetEnemiesRemaining(_enemiesRemaining);
+>>>>>>> 16c275a (Win and Loss conditions and the start of a menu system)
     }
 
     private void Update()
@@ -45,10 +55,7 @@ public class GameManager : MonoBehaviour
         float timeRemaining = _duration - (Time.time - _startTime);
         UIManager.Instance.SetTime(timeRemaining);
 
-        if (timeRemaining < 0)
-        {
-            // Do game end
-        }
+        CheckLossCondition();
     }
 
     private void Start()
@@ -58,14 +65,41 @@ public class GameManager : MonoBehaviour
 
     public void AdjustScore(int score)
     {
-        Debug.Log($"Adding {score} to {_score}");
         _score += score;
         UIManager.Instance.SetScore(_score);
     }
 
-    public void AdjustEnemies(int enemies) {
-        Debug.Log($"Adding {enemies} to {_enemies}");
-        _enemies += enemies;
-        UIManager.Instance.SetEnemies(_enemies);
+    public void AdjustEnemiesRemaining(int enemies) {
+        _enemiesRemaining += enemies;
+        UIManager.Instance.SetEnemiesRemaining(_enemiesRemaining);
+
+        CheckWinCondition();
+    }
+
+    public void AdjustEnemiesEscaped(int enemies)
+    {
+        _enemiesEscaped += enemies;
+        UIManager.Instance.SetEnemiesEscaped(_enemiesEscaped);
+
+        CheckLossCondition();
+    }
+
+    private void CheckLossCondition()
+    {
+        if (_enemiesEscaped > _enemyEscapeThreshold || _duration <= 0)
+        {
+            Debug.Log("You lose");
+            Debug.Break();
+        }
+    }
+
+    private void CheckWinCondition()
+    {
+        if (_enemiesRemaining <= 0)
+        {
+            // Trigger win condition
+            Debug.Log("You win!");
+            Debug.Break();
+        }
     }
 }

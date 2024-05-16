@@ -171,7 +171,7 @@ public class AI : MonoBehaviour
             hidingPlace.InUse = false;
         }
         DisableCollider();
-        GameManager.Instance.AdjustEnemies(-1);
+        GameManager.Instance.AdjustEnemiesRemaining(-1);
         _state = fsmStates.Dead;
         GameManager.Instance.AdjustScore(50);
 

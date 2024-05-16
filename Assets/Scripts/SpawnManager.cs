@@ -98,7 +98,6 @@ public class SpawnManager : MonoBehaviour
             {
                 target.gameObject.SetActive(true);
                 target.Initialize(_startPoint, _endPoint, _hidingPlaces);
-                GameManager.Instance.AdjustEnemies(1);
             }
 
             yield return new WaitForSeconds(_delayTime);

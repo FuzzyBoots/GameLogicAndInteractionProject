@@ -7,7 +7,8 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] TMP_Text scoreText;
     [SerializeField] TMP_Text timeText;
-    [SerializeField] TMP_Text enemiesText;
+    [SerializeField] TMP_Text enemiesRemainingText;
+    [SerializeField] TMP_Text enemiesEscapedText;
 
     private static UIManager _instance;
     public static UIManager Instance
@@ -38,7 +39,12 @@ public class UIManager : MonoBehaviour
         scoreText.text = $"Score: {score}";
     }
 
-    public void SetEnemies(int enemies) {
-        enemiesText.text = $"Enemies: {enemies}";
+    public void SetEnemiesRemaining(int enemies) {
+        enemiesRemainingText.text = $"Remaining: {enemies}";
+    }
+
+    public void SetEnemiesEscaped(int enemies)
+    {
+        enemiesEscapedText.text = $"Escaped: {enemies}";
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using UnityEngine;
@@ -53,6 +55,10 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         [SerializeField] AudioClip _gunSound;
         [SerializeField] AudioClip _ricochetSound;
         [SerializeField] AudioClip _hitSound;
+        bool _isAiming = false;
+        [SerializeField] private float _aimFOV = 15f;
+        [SerializeField] private float _zoomTime = 40f;
+        [SerializeField] private float _regularFOV = 55f;
 
         private void Start()
         {
@@ -113,6 +119,16 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
             else
             {
                 _isRunning = false;
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                _fpsCamera.DOFieldOfView(_aimFOV, _zoomTime).SetEase(Ease.OutQuad);
+            }
+
+            if (Input.GetMouseButtonUp(1))
+            {
+                _fpsCamera.DOFieldOfView(_regularFOV, _zoomTime).SetEase(Ease.OutQuad);
             }
 
             if (Input.GetMouseButtonDown(0) && Time.time > _canFire)
