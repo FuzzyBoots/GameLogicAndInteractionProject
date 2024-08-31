@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -9,9 +10,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] TMP_Text _timeText;
     [SerializeField] TMP_Text _enemiesRemainingText;
     [SerializeField] TMP_Text _enemiesEscapedText;
-
-    [SerializeField] GameObject _winScreen;
-    [SerializeField] GameObject _loseScreen;
 
     public static UIManager Instance
     {
@@ -53,11 +51,11 @@ public class UIManager : MonoBehaviour
 
     public void ShowWinScreen()
     {
-        _winScreen.SetActive(true);
+        SceneManager.LoadScene("WinScreen");
     }
 
     public void ShowLoseScreen()
     {
-        _loseScreen.SetActive(true);
+        SceneManager.LoadScene("LoseScreen");
     }
 }

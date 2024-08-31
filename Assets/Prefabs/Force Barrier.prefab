@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5763185769534635207}
   - component: {fileID: 3536736709525093728}
   - component: {fileID: 1956341747278713171}
+  - component: {fileID: 5182599671234033249}
   m_Layer: 6
   m_Name: Force Barrier
   m_TagString: Untagged
@@ -105,3 +106,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5182599671234033249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1346476309048033075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8be40c85553866749b37c776a31f3813, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fadeTime: 0
+  _reactivationDelay: 3

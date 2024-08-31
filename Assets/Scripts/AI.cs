@@ -1,10 +1,11 @@
+using DG.Tweening;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class AI : MonoBehaviour
+public class AI : MonoBehaviour, IShootable
 {
     NavMeshAgent _navMeshAgent;
 
@@ -33,6 +34,10 @@ public class AI : MonoBehaviour
     private Vector3 _lastPosition;
     [SerializeField] private float _fadeTime;
 
+    [field: SerializeField]
+    public Vector3 GetDestination { get { return NavMeshAgent.destination; } }
+
+
     public NavMeshAgent NavMeshAgent { 
         get { 
             if (!_navMeshAgent) { _navMeshAgent = GetComponent<NavMeshAgent>(); }
@@ -52,7 +57,7 @@ public class AI : MonoBehaviour
         {
             if (!_targetAnimator) { _targetAnimator = GetComponent<Animator>(); }
 
-            if (_navMeshAgent == null)
+            if (_targetAnimator == null)
             {
                 Debug.LogError("Could not find Animator!", this.gameObject);
             }
@@ -67,8 +72,6 @@ public class AI : MonoBehaviour
         // Start and End Points don't change but we'll pass them in.
         Debug.Log($"Resetting to {_startPoint} - {_endPoint} - {_hidingPoints}");
         Initialize(_startPoint, _endPoint, _hidingPoints);
-
-        gameObject.SetActive(true);
     }
 
     public void Initialize(Transform startPoint, Transform endPoint, List<HidingPlace> hidingPoints)
@@ -76,14 +79,10 @@ public class AI : MonoBehaviour
         _startPoint = startPoint;
         _endPoint = endPoint;
 
-        Debug.Log($"Initialized at {_startPoint.position}");
-
         NavMeshAgent.enabled = false;
         transform.position = _startPoint.position;
         transform.rotation = _startPoint.rotation;
         NavMeshAgent.enabled = true;
-
-        Debug.Log($"Located at {transform.position}");
 
         _hidingPoints = hidingPoints;
         _hidingPointIterator = _hidingPoints.GetEnumerator();
@@ -164,7 +163,10 @@ public class AI : MonoBehaviour
 
     private void StartDeath()
     {
+        Debug.Log("Starting death");
+        
         TargetAnimator.SetTrigger("Death");
+        NavMeshAgent.isStopped = true;
         GetComponent<AudioSource>().PlayDelayed(0.1f);
         if (hidingPlace && hidingPlace.InUse)
         {
@@ -177,7 +179,7 @@ public class AI : MonoBehaviour
 
         _timeToFade = Time.time + _fadeTime;
         
-        NavMeshAgent.isStopped = true;
+        // NavMeshAgent.isStopped = true;
     }
 
     private void DisableCollider()
@@ -190,7 +192,7 @@ public class AI : MonoBehaviour
         // After our death time has elapsed, fade away and return the model
         if (Time.time > _timeToFade)
         {
-            gameObject.SetActive(false);
+            SpawnManager.Instance.DeactivateInstance(this);
         }
     }
 
@@ -207,7 +209,7 @@ public class AI : MonoBehaviour
         }
     }
 
-    internal void HandleShot()
+    public void HandleShot()
     {
         StartDeath();
     }

@@ -121,35 +121,21 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                 _isRunning = false;
             }
 
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.LeftAlt))
             {
                 _fpsCamera.DOFieldOfView(_aimFOV, _zoomTime).SetEase(Ease.OutQuad);
             }
 
-            if (Input.GetMouseButtonUp(1))
+            if (Input.GetMouseButtonUp(1) && Input.GetKeyUp(KeyCode.LeftAlt))
             {
                 _fpsCamera.DOFieldOfView(_regularFOV, _zoomTime).SetEase(Ease.OutQuad);
             }
 
             if (Input.GetMouseButtonDown(0) && Time.time > _canFire)
             {
-                _canFire = Time.time +  _bulletDelay;
+                _canFire = Time.time + _bulletDelay;
                 _audioSource.PlayOneShot(_gunSound);
-
-                Ray ray = _fpsCamera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, _targetsAndBarriers))
-                {
-                    if (hit.collider.gameObject.TryGetComponent<AI>(out AI ai))
-                    {
-                        AudioSource.PlayClipAtPoint(_hitSound, hit.point);
-                        ai.HandleShot();
-                    }
-                    else
-                    {
-                        PlayClipAt(_ricochetSound, hit.collider.transform.position);
-                    }
-                }
+                HandleShot();
             }
 
             if (_controller.isGrounded == true) //check if we're grounded
@@ -171,15 +157,23 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
             _controller.Move(velocity * Time.deltaTime); //move the controller x meters per second
         }
 
-        //private void OnDrawGizmos()
-        //{
-        //    Ray ray = _fpsCamera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
-        //    RaycastHit hit;
-        //    if (Physics.Raycast(ray, out hit, Mathf.Infinity, _targetsAndBarriers))
-        //    {
-        //        Gizmos.DrawRay(ray);
-        //    }
-        //}
+        private void HandleShot()
+        {
+            Ray ray = _fpsCamera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, _targetsAndBarriers))
+            {
+                if (hit.collider.gameObject.TryGetComponent<IShootable>(out IShootable shot))
+                {
+                    AudioSource.PlayClipAtPoint(_hitSound, hit.point);
+                    shot.HandleShot();
+                } 
+                else
+                {
+                    PlayClipAt(_ricochetSound, hit.collider.transform.position);
+                }
+            }
+        }
 
         static AudioSource PlayClipAt(AudioClip clip, Vector3 pos, float delay = 0f)
         {
