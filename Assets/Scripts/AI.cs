@@ -33,6 +33,8 @@ public class AI : MonoBehaviour
     private Vector3 _lastPosition;
     [SerializeField] private float _fadeTime;
 
+
+
     public NavMeshAgent NavMeshAgent { 
         get { 
             if (!_navMeshAgent) { _navMeshAgent = GetComponent<NavMeshAgent>(); }

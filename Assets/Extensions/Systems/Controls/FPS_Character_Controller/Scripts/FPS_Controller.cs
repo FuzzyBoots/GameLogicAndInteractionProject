@@ -55,7 +55,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         [SerializeField] AudioClip _gunSound;
         [SerializeField] AudioClip _ricochetSound;
         [SerializeField] AudioClip _hitSound;
-        bool _isAiming = false;
+        
         [SerializeField] private float _aimFOV = 15f;
         [SerializeField] private float _zoomTime = 40f;
         [SerializeField] private float _regularFOV = 55f;
@@ -142,7 +142,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                 {
                     if (hit.collider.gameObject.TryGetComponent<AI>(out AI ai))
                     {
-                        AudioSource.PlayClipAtPoint(_hitSound, hit.point);
+                        PlayClipAt(_hitSound, hit.point);
                         ai.HandleShot();
                     }
                     else
@@ -171,16 +171,6 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
             _controller.Move(velocity * Time.deltaTime); //move the controller x meters per second
         }
 
-        //private void OnDrawGizmos()
-        //{
-        //    Ray ray = _fpsCamera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
-        //    RaycastHit hit;
-        //    if (Physics.Raycast(ray, out hit, Mathf.Infinity, _targetsAndBarriers))
-        //    {
-        //        Gizmos.DrawRay(ray);
-        //    }
-        //}
-
         static AudioSource PlayClipAt(AudioClip clip, Vector3 pos, float delay = 0f)
         {
             GameObject tempGO = new GameObject("TempAudio"); // create the temp object
@@ -189,8 +179,8 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
             aSource.clip = clip; // define the clip
             aSource.rolloffMode = AudioRolloffMode.Linear;
             aSource.spatialBlend = 1f;
-            aSource.PlayDelayed(delay + delay); // start the sound
-            Destroy(tempGO, clip.length); // destroy object after clip duration
+            aSource.PlayDelayed(delay); // start the sound
+            Destroy(tempGO, clip.length + delay); // destroy object after clip duration
             return aSource; // return the AudioSource reference
         }
 
