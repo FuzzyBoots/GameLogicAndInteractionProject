@@ -55,14 +55,9 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         // Update time
-        UIManager.Instance.SetTime(RemainingTime);
+        // UIManager.Instance.SetTime(RemainingTime);
 
         CheckLossCondition();
-
-        if (_isEnded && Input.GetKeyDown(KeyCode.Escape))
-        {
-            ReloadScene();
-        }
     }
 
     private void Start()

@@ -8,10 +8,11 @@ public class EndPoint : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<AI>())
+        Debug.Log("Entered the end zone");
+        if (other.gameObject.TryGetComponent<AI>(out AI aiObj))
         {
             GetComponent<AudioSource>().Play();
-            other.gameObject.SetActive(false);
+            SpawnManager.Instance.DeactivateInstance(aiObj);
 
             GameManager.Instance.AdjustEnemiesEscaped(1);
             GameManager.Instance.AdjustScore(-10);

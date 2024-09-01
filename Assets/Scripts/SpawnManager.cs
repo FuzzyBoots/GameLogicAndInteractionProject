@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -17,10 +18,12 @@ public class SpawnManager : MonoBehaviour
 
     [SerializeField] private List<AI> _objectPool;
     [SerializeField] private int _amountToPool = 10;
+    [SerializeField] private int _maxCapacity = 20;
 
     [SerializeField] List<HidingPlace> _hidingPlaces;
 
     [SerializeField] GameObject _hidingPlaceContainer;
+    private ObjectPool<AI> _newObjectPool;
 
     public static SpawnManager Instance
     {
@@ -30,10 +33,10 @@ public class SpawnManager : MonoBehaviour
 
     private void Awake()
     {
-        // If there is an instance, and it's not me, delete myself.
-
+        // Get the available hiding places
         _hidingPlaces = _hidingPlaceContainer.GetComponentsInChildren<HidingPlace>().ToList<HidingPlace>();
 
+        // If there is an instance, and it's not me, delete myself.
         if (Instance != null && Instance != this)
         {
             Destroy(this);
@@ -46,15 +49,35 @@ public class SpawnManager : MonoBehaviour
 
     private void Start()
     {
-        _objectPool = new List<AI>(_amountToPool);
-        for (int i=0; i < _amountToPool; ++i)
-        {
-            AI tmp = Instantiate(_targetObject);
-            tmp.gameObject.SetActive(false);
-            _objectPool.Add(tmp);
-        }
+        _newObjectPool = new ObjectPool<AI>(createAIFunc, getAIFunc, releaseAIFunc, destroyAIFunc, true, _amountToPool, _maxCapacity);
+
         StartSpawning();
     }
+
+    private void destroyAIFunc(AI aiObj)
+    {
+        Destroy(aiObj);
+    }
+
+    private void releaseAIFunc(AI aiObj)
+    {
+        aiObj.gameObject.SetActive(false);
+    }
+
+    private void getAIFunc(AI aiObj)
+    {
+        aiObj.gameObject.SetActive(true);
+    }
+
+    private AI createAIFunc()
+    {
+        AI tmp = Instantiate(_targetObject);
+        tmp.gameObject.SetActive(false);
+
+        return tmp;
+    }
+
+
 
     // Hide the constructor
     private SpawnManager() { }
@@ -73,30 +96,19 @@ public class SpawnManager : MonoBehaviour
         _spawning = false;
     }
 
-    private AI GetNextPooledObject()
-    {
-        for (int i = 0; i < _amountToPool; i++)
-        {
-            if (!_objectPool[i].gameObject.activeInHierarchy)
-            {
-                return _objectPool[i];
-            }
-        }
-        
-        return null;
-    }
-
     private IEnumerator SpawnTargets()
     {
         while (_spawning)
         {
-            AI target = GetNextPooledObject();
+            if (_newObjectPool.CountAll >= _maxCapacity)
+            {
+                Debug.Log("Failed to spawn additional enemy because our pool is full");
+            }
+            else
+            {
 
-            if (target == null)
-            {
-                Debug.LogWarning("Exceeded our object pool. Not spawning.");
-            } else
-            {
+                AI target = _newObjectPool.Get();
+
                 target.gameObject.SetActive(true);
                 target.Initialize(_startPoint, _endPoint, _hidingPlaces);
             }
@@ -107,11 +119,13 @@ public class SpawnManager : MonoBehaviour
         yield return null;
     }
 
+    public void DeactivateInstance(AI aiObj)
+    {
+        _newObjectPool.Release(aiObj);
+    }
+
     internal void DeactivateSpawns()
     {
-        foreach (AI item in _objectPool)
-        {
-            item.gameObject.SetActive(false);
-        }
+        _newObjectPool.Clear();
     }
 }
