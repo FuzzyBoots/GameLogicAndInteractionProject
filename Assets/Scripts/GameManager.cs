@@ -49,13 +49,12 @@ public class GameManager : MonoBehaviour
         _startTime = Time.time;
         _enemiesRemaining = _enemiesToKill;
         UIManager.Instance.SetEnemiesRemaining(_enemiesRemaining);
-        // SpawnManager.Instance.StartSpawning();
     }
 
     private void Update()
     {
         // Update time
-        // UIManager.Instance.SetTime(RemainingTime);
+        UIManager.Instance.SetTime(RemainingTime);
 
         CheckLossCondition();
     }

@@ -34,7 +34,7 @@ public class AI : MonoBehaviour, IShootable
     private Vector3 _lastPosition;
     [SerializeField] private float _fadeTime;
 
-    [field: SerializeField]
+    [SerializeField]
     public Vector3 GetDestination { get { return NavMeshAgent.destination; } }
 
 
@@ -83,6 +83,8 @@ public class AI : MonoBehaviour, IShootable
         transform.position = _startPoint.position;
         transform.rotation = _startPoint.rotation;
         NavMeshAgent.enabled = true;
+
+        EnableCollider();
 
         _hidingPoints = hidingPoints;
         _hidingPointIterator = _hidingPoints.GetEnumerator();
@@ -185,6 +187,11 @@ public class AI : MonoBehaviour, IShootable
     private void DisableCollider()
     {
         GetComponent<Collider>().enabled = false;
+    }
+
+    private void EnableCollider()
+    {
+        GetComponent<Collider>().enabled = true;
     }
 
     void DeathActions()

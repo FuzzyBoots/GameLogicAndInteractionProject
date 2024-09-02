@@ -9,24 +9,27 @@ public class BarrelExplosion : MonoBehaviour, IShootable
 
     public void HandleShot()
     {
+        if (gameObject.TryGetComponent<Collider>(out Collider barrel_collider))
+        {
+            barrel_collider.enabled = false;
+        }
+
         // Do a SphereOverlap to find targets
         Collider[] colliders = Physics.OverlapSphere(transform.position, _explosionRadius);
 
         foreach (Collider collider in colliders)
         {
-            if (collider.gameObject.CompareTag("Enemy"))
+            if (collider.TryGetComponent<IShootable>(out IShootable target))
             {
-                AI target = collider.gameObject.GetComponent<AI>();
-                if (target != null)
-                {
-                    target.HandleShot();
-                }
+                target.HandleShot();
             }
         }
 
-        Instantiate(_explosionObject, transform.position, Quaternion.identity);
-        Destroy(gameObject);
+        GameObject explosion = Instantiate(_explosionObject, transform.position, Quaternion.identity);
+        Destroy(explosion, 2f);
 
-        // AddExplosionForce?
+        // Add explosion force?
+
+        Destroy(gameObject);
     }
 }

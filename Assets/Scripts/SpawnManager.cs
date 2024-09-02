@@ -108,6 +108,7 @@ public class SpawnManager : MonoBehaviour
             {
 
                 AI target = _newObjectPool.Get();
+                target.gameObject.name = $"Target {UnityEngine.Random.Range(0, 256)}";
 
                 target.gameObject.SetActive(true);
                 target.Initialize(_startPoint, _endPoint, _hidingPlaces);
@@ -121,6 +122,7 @@ public class SpawnManager : MonoBehaviour
 
     public void DeactivateInstance(AI aiObj)
     {
+        Debug.Log($"Deactivating {aiObj.gameObject.name}");
         _newObjectPool.Release(aiObj);
     }
 

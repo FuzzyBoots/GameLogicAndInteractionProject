@@ -126,7 +126,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                 _fpsCamera.DOFieldOfView(_aimFOV, _zoomTime).SetEase(Ease.OutQuad);
             }
 
-            if (Input.GetMouseButtonUp(1) && Input.GetKeyUp(KeyCode.LeftAlt))
+            if (Input.GetMouseButtonUp(1) || Input.GetKeyUp(KeyCode.LeftAlt))
             {
                 _fpsCamera.DOFieldOfView(_regularFOV, _zoomTime).SetEase(Ease.OutQuad);
             }
@@ -140,10 +140,10 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, _targetsAndBarriers))
                 {
-                    if (hit.collider.gameObject.TryGetComponent<AI>(out AI ai))
+                    if (hit.collider.gameObject.TryGetComponent<IShootable>(out IShootable target))
                     {
                         AudioSource.PlayClipAtPoint(_hitSound, hit.point);
-                        ai.HandleShot();
+                        target.HandleShot();
                     }
                     else
                     {
